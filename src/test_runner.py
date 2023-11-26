@@ -1,17 +1,20 @@
+import importlib
+import sys
+import os
 from abc import ABC, abstractmethod
+from src.scenario import Scenario
+from src.environment import Environment
 import time
 import threading
 
 class BaseTestRunner(ABC):
-    def __init__(self, wait_for_agents=False):
-        self.wait_for_agents = wait_for_agents
-        pass
+    def __init__(self, scenario: Scenario):
+        self.wait_for_agents = scenario.wait_for_agents
+        self.scenario = scenario
+        self.environment = Environment(scenario.environment)
     
-    def init(self):
-        self.init_agents()
-        return self
-  
     def run(self, timeout_sec=20):
+        self.before(self.scenario, self.environment)
         threading.Thread(target=self.run_agents).start()
         start = time.time()
 
@@ -33,16 +36,25 @@ class BaseTestRunner(ABC):
             
             time.sleep(0.1)
 
-    @abstractmethod
     def run_tests(self):
-        pass
+        passed = self.environment.validate_state()
+        for test in self.get_test_methods():
+            passed = test(self)
+        return passed
+    
+    def get_test_methods(cls):
+        return [getattr(cls, func) for func in dir(cls) if callable(getattr(cls, func)) and func.startswith('test')]
 
     @abstractmethod
     def agents_are_running(self):
         pass
     
     @abstractmethod
-    def init_agents(self):
+    def before(self):
+        pass
+
+    @abstractmethod
+    def after(self):
         pass
     
     @abstractmethod
@@ -52,3 +64,15 @@ class BaseTestRunner(ABC):
     @abstractmethod
     def stop_agents(self):
         pass
+
+
+def import_test_runner(module_path: str):
+    spec = importlib.util.spec_from_file_location("test_runner", module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    cls = module.TestRunner
+    if not issubclass(cls, BaseTestRunner):
+        raise Exception("TestRunner class must inherit from BaseTestRunner: %s" % module_path)
+    
+    return cls
