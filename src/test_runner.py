@@ -1,4 +1,4 @@
-import importlib
+import importlib.util as importutil
 from src.scenario import Scenario
 from src.environment import Environment
 import time
@@ -84,8 +84,8 @@ class BaseTestRunner():
 
 
 def import_test_runner(module_path: str):
-    spec = importlib.util.spec_from_file_location("test_runner", module_path)
-    module = importlib.util.module_from_spec(spec)
+    spec = importutil.spec_from_file_location("test_runner", module_path)
+    module = importutil.module_from_spec(spec)
     spec.loader.exec_module(module)
 
     cls = module.TestRunner

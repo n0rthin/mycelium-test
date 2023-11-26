@@ -5,6 +5,9 @@ from src.test_runner import import_test_runner
 from src.config import MycConfig
 from rich import print
 
+app = typer.Typer(invoke_without_command=True)
+
+@app.callback()
 def main():
     config = MycConfig()
     config.root_dir = os.getcwd()
@@ -17,5 +20,6 @@ def main():
         test_runner = test_runner_cls(scenario)
         test_runner.run()
 
+
 if __name__ == "__main__":
-    typer.run(main)
+    app()
