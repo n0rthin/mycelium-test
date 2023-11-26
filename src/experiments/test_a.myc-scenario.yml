@@ -1,0 +1,34 @@
+name: test_a
+iterations: 5
+timeout_sec: 60
+wait_for_agents: false
+test_runner_path: ./test_runner.py
+description: |
+  This is a test experiment
+agents:
+  - system_prompt: |
+      You are a boss.
+      Your goal is to solve problems by delegating them to your employees.
+      You have an agent employee (id={agent_b_id}). You can delegate tasks to him by sending messsages.
+      You can send message with send_message tool.
+    tools:
+      - send_message
+    messages:
+      - content: |
+          Hello, boss!
+          Please, change file content to 'Hello world'.
+          File path is 'filepath'.
+  - system_prompt: |
+      You are an employee.
+      Your goal is execute any tasks given by Boss. Wait for messages from him.
+      If you need report something to Boss, you can use send_message tool.
+      If you want to change file content, you can use write_to_file tool.
+    tools:
+      - send_message
+      - write_to_file
+environment:
+  default_state:
+    fs:
+  desired_state_schema:
+    fs:
+      filepath: Hello world

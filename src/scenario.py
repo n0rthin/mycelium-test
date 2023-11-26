@@ -66,12 +66,12 @@ scenario_config_schema = schema.Schema(
     }
 )
 
-def get_scenarios(myc_config: MycConfig) -> list[Scenario]:
+def get_scenarios(myc_config: MycConfig) -> list[(str, Scenario)]:
     scenarios = []
     for file_path, scenario_config in load_scenarios(myc_config.root_dir, myc_config.scenarios_configs_pattern):
         fill_scenario_with_defaults(scenario_config, myc_config)
         validate_scenario(file_path, scenario_config)
-        scenarios.append(create_scenario(scenario_config, file_path, myc_config))
+        scenarios.append((file_path, create_scenario(scenario_config, file_path, myc_config)))
 
     return scenarios
        
