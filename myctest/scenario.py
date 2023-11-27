@@ -1,9 +1,11 @@
 import os
 import glob
 import yaml
+import re
 from typing import Optional, List, Dict
 import schema
-from src.config import MycConfig
+from myctest.config import MycConfig
+from rich import print
 
 class WithMetadata:
     metadata: Optional[Dict]
@@ -68,9 +70,9 @@ scenario_config_schema = schema.Schema(
 
 def get_scenarios(myc_config: MycConfig) -> list[(str, Scenario)]:
     scenarios = []
-    for file_path, scenario_config in load_scenarios(myc_config.root_dir, myc_config.scenarios_configs_pattern):
-        fill_scenario_with_defaults(scenario_config, myc_config)
+    for file_path, scenario_config in load_scenarios(myc_config.root_dir, myc_config.scenarios_configs_patterns):
         validate_scenario(file_path, scenario_config)
+        fill_scenario_with_defaults(scenario_config, myc_config)
         scenarios.append((file_path, create_scenario(scenario_config, file_path, myc_config)))
 
     return scenarios
@@ -117,10 +119,10 @@ def fill_scenario_with_defaults(scenario_config: dict, myc_config: MycConfig):
     if "test_runner_path" not in scenario_config:
         scenario_config["test_runner_path"] = myc_config.default_test_runner_path
 
-def load_scenarios(directory, pattern):
+def load_scenarios(directory: str, patterns: list[str]):
     scenarios = []
 
-    for file_path in get_scenarios_paths(directory, pattern):
+    for file_path in get_scenarios_paths(directory, patterns):
         with open(file_path, "r") as stream:
             parsed_scenario = yaml.safe_load(stream)
             scenarios.append((file_path, parsed_scenario))
@@ -141,8 +143,16 @@ def validate_scenario(file_path, scenario_config: dict):
         print("Scenario config is invalid: %s" % file_path)
         raise e
 
-def get_scenarios_paths(directory, pattern):
+def get_scenarios_paths(directory: str, patterns: list[str]):
+    # TODO: do not walk through excluded directories and optimize this
     for root, _, files in os.walk(directory):
-        for file in glob.fnmatch.filter(files, pattern):
+        files = [os.path.join(root, file) for file in files]
+
+
+        for pattern in patterns:
+            pattern = re.compile(pattern)
+            files = [path for path in files if pattern.search(path)]
+
+        for file in files:
             yield os.path.join(root, file)
 

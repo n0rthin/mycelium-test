@@ -6,4 +6,5 @@ class MycConfig:
     wait_for_agents: Optional[bool] = False
     default_test_runner_path: Optional[str]
     root_dir: Optional[str]
-    scenarios_configs_pattern: Optional[str] = "*.myc-scenario.yml"
+    # scenarios_configs_patterns: Optional[list[str]] = ["!/**/venv/*.myc-scenario.yml"]
+    scenarios_configs_patterns: Optional[list[str]] = [r'^(?!.*\/venv\/).*\.myc-scenario\.yml$']

@@ -1,4 +1,4 @@
-from src.test_runner import BaseTestRunner
+from myctest.runner import BaseTestRunner
 
 class TestRunner(BaseTestRunner):
     pass

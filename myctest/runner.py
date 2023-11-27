@@ -1,6 +1,6 @@
 import importlib.util as importutil
-from src.scenario import Scenario
-from src.environment import Environment
+from myctest.scenario import Scenario
+from myctest.environment import Environment
 import time
 from rich import print
 

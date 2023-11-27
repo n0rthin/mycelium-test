@@ -1,8 +1,8 @@
 import os
 import typer
-from src.scenario import get_scenarios
-from src.test_runner import import_test_runner
-from src.config import MycConfig
+from myctest.scenario import get_scenarios
+from myctest.runner import import_test_runner
+from myctest.config import MycConfig
 from rich import print
 
 app = typer.Typer(invoke_without_command=True)

@@ -2,9 +2,9 @@ import uuid
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.test_runner import BaseTestRunner
-from src.environment import Environment
-from src.agent import Agent, ToolsService
+from myctest.runner import BaseTestRunner
+from myctest.environment import Environment
+from myctest.agent import Agent, ToolsService
 
 agents = {}
 

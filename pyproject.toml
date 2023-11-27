@@ -1,16 +1,13 @@
 [tool.poetry]
-name = "mycelium-test"
+name = "myctest"
 version = "0.1.0"
 description = "Automated testing framework for collaborating LLM-based agents"
 authors = ["Vlad Severin <severinv42@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [
-    { include = "src" },
-]
 
 [tool.poetry.scripts]
-myc-test = "src.cli:app"
+myc-test = "myctest.cli:app"
 
 [tool.poetry.dependencies]
 python = "^3.10"

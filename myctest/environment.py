@@ -1,5 +1,5 @@
-from src.observable import Observable    
-from src.scenario import EnvironmentConfig
+from myctest.observable import Observable    
+from myctest.scenario import EnvironmentConfig
 
 class EnvironmentState:
     def __init__(self, default_state = {}):
